@@ -2,9 +2,10 @@
 # -*- coding:utf-8 -*-
 
 import time
+from os import system
+
 
 Coordinate:list[int]=[1,-1]
-
 
 
 def cb0(m,n):
@@ -35,6 +36,7 @@ def cb0(m,n):
                     return "╋━━"
 
 
+
 class Player:
     def __init__(self,name,game,n):
         self.playername=name
@@ -45,6 +47,7 @@ class Player:
         #print(self.playgame.checkerboard)
         self.playgame.checkerboard[x][y]=self.n
         print(f'[{time.strftime("%H:%M:%S",time.localtime())}]Player "{self.playername}" go to ({x},{y}).')
+
 
 
 class Checkerboard:
@@ -76,6 +79,7 @@ class Checkerboard:
                     print("○━━",end="")
             print("\n")
         
+
 
 def resolve_coordinates(s):
     x=int(s.split(',')[0][1:])
@@ -138,9 +142,6 @@ def cr(a): # \
                 return v
 
 
-#--------------------------
-
-
 # row-, column|, rc\, cr /
 def victory_rules(l:list):
     ks:list=[[1,1,1,1,1],[-1,-1,-1,-1,-1],[0,0,0,0,0]]
@@ -151,6 +152,9 @@ def victory_rules(l:list):
             return d[k]
 
 
+def game_over(player):
+    print(f'[{time.strftime("%H:%M:%S",time.localtime())}][END]"{player.playername}" You are victorious!!')
+    a.p(Coordinate)
 
 
 if __name__ == '__main__':
@@ -158,6 +162,7 @@ if __name__ == '__main__':
     while victory==0:
         for per in [per1,per2]:
             while True:
+                # system('cls') # clear
                 a.p(Coordinate)
                 xy=input(f'[{time.strftime("%H:%M:%S",time.localtime())}]Player "{per.playername}" go to(x,y):')
                 x,y=resolve_coordinates(xy)
@@ -172,14 +177,9 @@ if __name__ == '__main__':
             column(a.checkerboard) or 
             row(a.checkerboard)):
                     case per1.n:
-                        print(f'[{time.strftime("%H:%M:%S",time.localtime())}][END]"{per1.playername}" You are victorious!!')
-                        a.p(Coordinate)
-                        victory=True
+                        victory=game_over(per1)
                         break
                     case per2.n:
-                        print(f'[{time.strftime("%H:%M:%S",time.localtime())}][END]"{per2.playername}" You are victorious!!')
-                        a.p(Coordinate)
-                        victory=True
+                        victory=game_over(per2)
                         break
-
 
