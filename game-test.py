@@ -13,32 +13,33 @@ def cb0(m,n):
         case 0: # top
             match m:
                 case 0:
-                    return "┏━━"
+                    return "┏   "
                 case 14:
                     return "┓"
                 case _:
-                    return "┳━━"
+                    return "┳   "
         case 14: # buttom
             match m:
                 case 0:
-                    return "┗━━"
+                    return "┗   "
                 case 14:
                     return "┛"
                 case _:
-                    return "┻━━"
+                    return "┻   "
         case _: # center
             match m:
                 case 0:
-                    return "┣━━"
+                    return "┣   "
                 case 14:
                     return "┫"
                 case _:
-                    return "╋━━"
+                    return "╋   "
 
 
 
 class Player:
     def __init__(self,name,game,n):
+        # TODO socket
         self.playername=name
         self.playgame=game
         self.n=n
@@ -74,9 +75,9 @@ class Checkerboard:
                 if self.checkerboard[n][m]==0:
                     print(cb0(m,n),end="")
                 elif self.checkerboard[n][m]==Coordinate[0]:
-                    print("●━━",end="")
+                    print("●   ",end="")
                 elif self.checkerboard[n][m]==Coordinate[1]:
-                    print("○━━",end="")
+                    print("○   ",end="")
             print("\n")
         
 
@@ -87,8 +88,12 @@ def resolve_coordinates(s):
     return x,y
 
 def check_the_coordinates(game,x,y,player):
-    if game.checkerboard[x][y]!=0:
-        print(f'[{time.strftime("%H:%M:%S",time.localtime())}][ERR] "{player.playername}" You can\'t come here! ({x},{y}).')
+    try:
+        if game.checkerboard[x][y]!=0:
+            print(f'[{time.strftime("%H:%M:%S",time.localtime())}][ERR] "{player.playername}" Someone is already here. ({x},{y})')
+            return True
+    except IndexError:
+        print(f'[{time.strftime("%H:%M:%S",time.localtime())}][ERR] "{player.playername}" You can\'t come here! ({x},{y})')
         return True
 
 
@@ -101,45 +106,49 @@ print(f'[{time.strftime("%H:%M:%S",time.localtime())}]Games start.')
 def row(a): # --
     for line in range(0,len(a)):
         for i in range(0,len(a)-4):
-            l=[a[line][i],a[line][i+1],a[line][i+2],a[line][i+3],a[line][i+4]]
-            #print("row:",l)
-            v=victory_rules(l)
-            #print(v)
-            if (v == -1) or (v == 1):
-                return v
+            if (a[line][i])!=0:
+                l=[a[line][i],a[line][i+1],a[line][i+2],a[line][i+3],a[line][i+4]]
+                #print("row:",l)
+                v=victory_rules(l)
+                #print(v)
+                if (v == -1) or (v == 1):
+                    return v
 
 
 def column(a): # |
     for line in range(0,len(a)-4):
         for i in range(0,len(a)):
-            l=[a[line][i],a[line+1][i],a[line+2][i],a[line+3][i],a[line+4][i]]
-            #print("column:",l)
-            v=victory_rules(l)
-            #print(v)
-            if (v == -1) or (v == 1):
-                return v
+            if (a[line][i])!=0:
+                l=[a[line][i],a[line+1][i],a[line+2][i],a[line+3][i],a[line+4][i]]
+                #print("column:",l)
+                v=victory_rules(l)
+                #print(v)
+                if (v == -1) or (v == 1):
+                    return v
 
 
 def rc(a): # /
     for line in range(0,len(a)-4):
         for i in range(5,len(a)):
-            l=[a[line][i],a[line+1][i-1],a[line+2][i-2],a[line+3][i-3],a[line+4][i-4]]
-            #print("row-column:",l)
-            v=victory_rules(l)
-            #print(v)
-            if (v == -1) or (v == 1):
-                return v
+            if (a[line][i])!=0:
+                l=[a[line][i],a[line+1][i-1],a[line+2][i-2],a[line+3][i-3],a[line+4][i-4]]
+                #print("row-column:",l)
+                v=victory_rules(l)
+                #print(v)
+                if (v == -1) or (v == 1):
+                    return v
 
 
 def cr(a): # \
     for line in range(0,len(a)-4):
         for i in range(0,len(a)-4):
-            l=[a[line][i],a[line+1][i+1],a[line+2][i+2],a[line+3][i+3],a[line+4][i+4]]
-            #print("column-row:",l)
-            v=victory_rules(l)
-            #print(v)
-            if (v == -1) or (v == 1):
-                return v
+            if (a[line][i])!=0:
+                l=[a[line][i],a[line+1][i+1],a[line+2][i+2],a[line+3][i+3],a[line+4][i+4]]
+                #print("column-row:",l)
+                v=victory_rules(l)
+                #print(v)
+                if (v == -1) or (v == 1):
+                    return v
 
 
 # row-, column|, rc\, cr /
@@ -157,12 +166,13 @@ def game_over(player):
     a.p(Coordinate)
 
 
+
 if __name__ == '__main__':
     victory=False
     while victory==0:
         for per in [per1,per2]:
+            # system('cls') # clear
             while True:
-                # system('cls') # clear
                 a.p(Coordinate)
                 xy=input(f'[{time.strftime("%H:%M:%S",time.localtime())}]Player "{per.playername}" go to(x,y):')
                 x,y=resolve_coordinates(xy)
